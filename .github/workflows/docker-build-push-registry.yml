@@ -12,7 +12,7 @@ jobs:
     
     env:
       GH_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IMAGE: ghrc.io/v2power/linuxtips-giropops/aplicacao:${{ github.sha }}
+      IMAGE: ghcr.io/v2power/linuxtips-giropops/aplicacao:${{ github.sha }}
       registry: ghcr.io
 
     
