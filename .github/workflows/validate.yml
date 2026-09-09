@@ -12,6 +12,10 @@ jobs:
   test:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
+      NOME_ALUNO: ${{ vars.NOME_ALUNO }}
   
     steps:
       - uses: docker/login-action@v4
@@ -21,14 +25,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Pull and run
-        env:
-          IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
-          NOME_ALUNO: ${{ vars.NOME_ALUNO }}
         run: |
           IMAGE=ghcr.io/${{ github.repository }}/aplicacao:${{ env.IMAGE_TAG }}
           LOWER_CASE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
           docker pull "$LOWER_CASE"
-          docker run -d --env NOME_ALUNO="$NOME_ALUNO" -p 3000:3000 "$LOWER_CASE"
+
+      - name: Docker Run
+        run: |
+          docker run -d --env NOME_ALUNO="${{ env.NOME_ALUNO }}" -p 3000:3000 "$LOWER_CASE"
 
       - name: Verificação do nome
         run: curl http://localhost:3000/
