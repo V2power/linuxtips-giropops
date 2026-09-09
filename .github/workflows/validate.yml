@@ -1,0 +1,35 @@
+name: Test Container
+on:
+  workflow_run:
+    workflows: ["Docker Build e Push no Registry"]
+    types: [completed]
+
+permissions:
+  packages: read
+  contents: read
+
+jobs:
+  test:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+  
+    steps:
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Pull and run
+        env:
+          IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
+          NOME_ALUNO: ${{ vars.NOME_ALUNO }}
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/aplicacao:${IMAGE_TAG}
+          docker pull "$IMAGE"
+          docker run -d --env NOME_ALUNO="$NOME_ALUNO" -p 3000:3000 "$IMAGE"
+
+      - name: Verificação do nome
+        run: curl http://localhost:3000/
+
+      
