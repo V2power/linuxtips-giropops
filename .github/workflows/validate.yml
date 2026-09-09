@@ -26,6 +26,7 @@ jobs:
           NOME_ALUNO: ${{ vars.NOME_ALUNO }}
         run: |
           IMAGE=ghcr.io/${{ github.repository }}/aplicacao:${{ env.IMAGE_TAG }}
+          LOWER_CASE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
           docker pull "$IMAGE"
           docker run -d --env NOME_ALUNO="$NOME_ALUNO" -p 3000:3000 "$IMAGE"
 

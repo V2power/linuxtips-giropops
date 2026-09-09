@@ -12,7 +12,7 @@ jobs:
     
     env:
       GH_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IMAGE_NAME: ${{ github.repository }}
+      IMAGE: ghrc.io/${{ github.repository }}/aplicacao:${{ github.sha }}
       registry: ghcr.io
     
     steps:
@@ -25,14 +25,15 @@ jobs:
           registry: ${{ env.registry}}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Run lower case
+        run: LOWER_CASE=$(echo "${{env.IMAGE}}" | tr '[:upper:]' '[:lower:]')
           
       - name: Build and push Docker image
-        env:
-          IMAGE: ghrc.io/${{ github.repository }}/aplicacao:${{ github.sha }}
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./aplicacao
           build-args: GH_PACKAGES_TOKEN
           push: true
-          tags: ${{ env.IMAGE }}
+          tags: $LOWER_CASE
