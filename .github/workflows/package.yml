@@ -29,6 +29,7 @@ jobs:
         run: npm install --package-lock-only --ignore-script
 
       - name: Run npm ci
+        working-directory: pacote
         run: npm ci && npm test
       
       - name: Publish to GitHub Packages
