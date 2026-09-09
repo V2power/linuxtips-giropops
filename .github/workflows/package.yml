@@ -1,0 +1,24 @@
+name: Criação de Packages
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v7.0.0
+
+      - name: Run node install
+        run: node install
+
+      - name: Run node ci
+        run: node ci && node test
