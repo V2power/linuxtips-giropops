@@ -38,8 +38,17 @@ jobs:
       
       - name: Verificar container
         run: |
+          sleep 3
+
+          echo "=== CONTAINERS ==="
           docker ps -a
-          docker logs aplicacao    
+
+          echo "=== STATUS ==="
+          docker inspect aplicacao \
+            --format='Status={{.State.Status}} ExitCode={{.State.ExitCode}} Error={{.State.Error}}'
+
+          echo "=== LOGS ==="
+          docker logs aplicacao || true
 
       - name: Verificação do nome
         run: |
