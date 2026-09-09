@@ -34,9 +34,16 @@ jobs:
         run: |
           IMAGE=ghcr.io/${{ github.repository }}/aplicacao:${{ env.IMAGE_TAG }}
           LOWER_CASE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
-          docker run -d --env NOME_ALUNO="${{ env.NOME_ALUNO }}" -p 3000:3000 "$LOWER_CASE"
+          docker run -d --name aplicacao --env NOME_ALUNO="${{ env.NOME_ALUNO }}" -p 3000:3000 "$LOWER_CASE"
+      
+      - name: Verificar container
+        run: |
+          docker ps -a
+          docker logs aplicacao    
 
       - name: Verificação do nome
-        run: curl http://localhost:3000/
+        run: |
+          sleep 3
+          curl http://localhost:3000/
 
       
