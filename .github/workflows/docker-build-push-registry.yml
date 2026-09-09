@@ -12,8 +12,9 @@ jobs:
     
     env:
       GH_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IMAGE: ghrc.io/${{ github.repository }}/aplicacao:${{ github.sha }}
+      IMAGE: ghrc.io/v2power/linuxtips-giropops/aplicacao:${{ github.sha }}
       registry: ghcr.io
+
     
     steps:
       - name: Checkout
@@ -25,9 +26,6 @@ jobs:
           registry: ${{ env.registry}}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Run lower case
-        run: LOWER_CASE=$(echo "${{env.IMAGE}}" | tr '[:upper:]' '[:lower:]')
           
       - name: Build and push Docker image
         id: push
@@ -36,4 +34,4 @@ jobs:
           context: ./aplicacao
           build-args: GH_PACKAGES_TOKEN
           push: true
-          tags: $LOWER_CASE
+          tags: ${{ env.IMAGE }}

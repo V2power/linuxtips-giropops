@@ -27,8 +27,8 @@ jobs:
         run: |
           IMAGE=ghcr.io/${{ github.repository }}/aplicacao:${{ env.IMAGE_TAG }}
           LOWER_CASE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
-          docker pull "$IMAGE"
-          docker run -d --env NOME_ALUNO="$NOME_ALUNO" -p 3000:3000 "$IMAGE"
+          docker pull "$LOWER_CASE"
+          docker run -d --env NOME_ALUNO="$NOME_ALUNO" -p 3000:3000 "$LOWER_CASE"
 
       - name: Verificação do nome
         run: curl http://localhost:3000/
