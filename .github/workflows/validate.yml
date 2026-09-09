@@ -1,4 +1,4 @@
-name: Test Container
+name: Validar em runtime
 on:
   workflow_run:
     workflows: ["Docker Build e Push no Registry"]
@@ -25,7 +25,7 @@ jobs:
           IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
           NOME_ALUNO: ${{ vars.NOME_ALUNO }}
         run: |
-          IMAGE=ghcr.io/${{ github.repository }}/aplicacao:${IMAGE_TAG}
+          IMAGE=ghcr.io/${{ github.repository }}/aplicacao:${{ env.IMAGE_TAG }}
           docker pull "$IMAGE"
           docker run -d --env NOME_ALUNO="$NOME_ALUNO" -p 3000:3000 "$IMAGE"
 

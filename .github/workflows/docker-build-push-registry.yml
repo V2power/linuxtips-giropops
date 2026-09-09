@@ -12,6 +12,8 @@ jobs:
     
     env:
       GH_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IMAGE_NAME: ${{ github.repository }}
+      registry: ghcr.io
     
     steps:
       - name: Checkout
@@ -20,19 +22,17 @@ jobs:
       - name: Docker GHCR Login
         uses: docker/login-action@v4
         with:
-          registry: ghcr.io
+          registry: ${{ env.registry}}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build image
-        run: |
-          docker build . --file ./aplicacao/Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
-
-      - name: Build image
-        run: |
-          IMAGE=ghrc.io/${{ github.repository }}/aplicacao:${{ github.sha }}
-          docker build \
-            --build-arg GH_PACKAGES_TOKEN \
-            -t "$IMAGE" \
-            aplicacao
-          docker push "$IMAGE"
+          
+      - name: Build and push Docker image
+        env:
+          IMAGE: ghrc.io/${{ github.repository }}/aplicacao:${{ github.sha }}
+        id: push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./aplicacao
+          build-args: GH_PACKAGES_TOKEN
+          push: true
+          tags: ${{ env.IMAGE }}
